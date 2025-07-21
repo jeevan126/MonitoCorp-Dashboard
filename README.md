@@ -72,16 +72,27 @@ A modern service monitoring dashboard built with **Next.js**, **React Query**, a
 
 ### 1. Clone the Repository
 
+
 ```bash
 git clone https://github.com/your-username/monitocorp-dashboard.git
 cd monitocorp-dashboard
 
+```
+### 2. Install Dependencies
+
+
+```bash
 npm install
 # or
 yarn install
+```
 
+### 3. Start the Development Server
 
+```bash
 # Automatically starts with dev mode
 npm run dev
 
 Open http://localhost:3000 in your browser.
+
+```bash
