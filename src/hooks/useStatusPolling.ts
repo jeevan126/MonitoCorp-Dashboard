@@ -1,22 +1,21 @@
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { ServicesResponse, ServiceType } from '@/lib/type';
 
 export const useStatusPolling = ({ page, limit }: { page: number; limit: number }) => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-
     const fetchAndUpdate = async () => {
       try {
         const res = await fetch(`/api/services/statuses?page=${page}&limit=${limit}`);
         if (!res.ok) throw new Error('Status update failed');
         const updates: { id: string; status: string }[] = await res.json();
 
-        queryClient.setQueryData(['services', { page, limit }], (old: any) => {
+        queryClient.setQueryData(['services', { page, limit }], (old: ServicesResponse) => {
           if (!old?.data) return old;
 
-          const newData = old.data.map((s: any) => {
+          const newData = old.data.map((s: ServiceType) => {
             const updated = updates.find((u) => u.id === s.id);
             return updated ? { ...s, status: updated.status } : s;
           });
@@ -28,7 +27,7 @@ export const useStatusPolling = ({ page, limit }: { page: number; limit: number 
       }
     };
 
-    interval = setInterval(fetchAndUpdate, 15_000);
+    const interval: NodeJS.Timeout = setInterval(fetchAndUpdate, 15_000);
     fetchAndUpdate();
 
     const handleVisibilityChange = () => {

@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 type DeleteModalProps = {
   open: boolean;
   onClose: () => void;
-  onConfirm: () => Promise<void>; // Make sure onConfirm returns a promise
+  onConfirm: () => Promise<void>;
   loading?: boolean;
 };
 
@@ -30,19 +30,16 @@ export const DeleteModal = ({ open, onClose, onConfirm, loading }: DeleteModalPr
 
   return (
     <>
-      {/* Backdrop */}
       <div
         className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm transition-opacity"
         onClick={handleOverlayClick}
       />
 
-      {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
         <div
           className="bg-white w-full max-w-sm p-6 rounded-xl shadow-xl relative animate-fade-in"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Close Icon */}
           <button
             onClick={onClose}
             className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
@@ -50,13 +47,11 @@ export const DeleteModal = ({ open, onClose, onConfirm, loading }: DeleteModalPr
             <X className="w-5 h-5" />
           </button>
 
-          {/* Content */}
           <h2 className="text-xl font-semibold mb-2">Confirm Deletion</h2>
           <p className="text-sm text-gray-600 mb-6">
             Are you sure you want to delete this service? This action cannot be undone.
           </p>
 
-          {/* Actions */}
           <div className="flex justify-end gap-3">
             <button
               onClick={onClose}

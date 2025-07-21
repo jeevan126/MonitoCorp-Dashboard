@@ -52,7 +52,6 @@ export const handlers = [
     const limit = parseInt(req.url.searchParams.get('limit') || '10');
     const start = (page - 1) * limit;
 
-    // Randomly update some statuses
     const updatedSlice = mockServices.slice(start, start + limit).map((s) => {
       const random = Math.random();
       const options = ['Online', 'Offline', 'Degraded'];
@@ -76,7 +75,7 @@ export const handlers = [
       id: uuidv4(),
       name: body.name,
       type: body.type,
-      status: 'Online', // default status
+      status: 'Online', 
     };
 
     mockServices.unshift(newService);

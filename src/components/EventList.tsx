@@ -1,6 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { useServiceEvents } from '@/hooks/useServiceEvents';
 import { Loader2 } from 'lucide-react';
+import { EventType } from '@/lib/type';
 
 export const EventList = ({ serviceId }: { serviceId: string }) => {
   const {
@@ -23,7 +24,9 @@ export const EventList = ({ serviceId }: { serviceId: string }) => {
     );
     const node = loadMoreRef.current;
     if (node) observer.observe(node);
-    return () => node && observer.unobserve(node);
+    return () => {
+      if (node) observer.unobserve(node);
+    };
   }, [hasNextPage, fetchNextPage]);
 
   const allEvents = data?.pages.flatMap((page) => page.data) ?? [];
@@ -40,7 +43,7 @@ export const EventList = ({ serviceId }: { serviceId: string }) => {
         <p className="text-sm text-center text-gray-400">No historical events found.</p>
       )}
 
-      {allEvents.map((event: any) => (
+      {allEvents.map((event: EventType) => (
         <div
           key={event.id}
           className="border rounded-lg px-4 py-3 bg-white shadow-sm flex justify-between items-center"

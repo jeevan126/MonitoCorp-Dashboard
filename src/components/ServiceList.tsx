@@ -7,35 +7,31 @@ import { useStatusPolling } from '@/hooks/useStatusPolling';
 import { ServiceModal } from './ServiceModal';
 import { useDeleteService } from '@/hooks/useServiceMutations';
 import { DeleteModal } from './DeleteModal';
-import {
-  Card,
-  CardContent,
-} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { Trash2, Pencil, Plus, Loader2 } from 'lucide-react';
+import { ServicesResponse, ServiceType } from '@/lib/type';
 
 export const ServiceList = () => {
   const [filters, setFilters] = useState<{ status?: string; name_like?: string }>({});
   const [page, setPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
-  const [editing, setEditing] = useState<any>(null);
-  const [deleteTarget, setDeleteTarget] = useState<any>(null);
+  const [editing, setEditing] = useState<ServiceType|null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<ServiceType|null>(null);
   const limit = 10;
 
   const router = useRouter();
   useStatusPolling({ page, limit });
 
-  const { data, isLoading, isError, isFetching } = useServices({ ...filters, page, limit });
+  const { data, isLoading, isError, isFetching } = useServices({ ...filters, page, limit }) as { data: ServicesResponse | undefined, isLoading: boolean, isError: boolean, isFetching: boolean };
   const deleteMutation = useDeleteService();
 
   const totalPages = data ? Math.ceil(data.total / limit) : 1;
 
   return (
     <div className="space-y-6">
-      {/* Filters */}
       <div className="flex gap-4 items-center">
         <Input
           placeholder="Search by name..."
@@ -78,7 +74,6 @@ export const ServiceList = () => {
         </Button>
       </div>
 
-      {/* Service List */}
       {isLoading && 
         <div className="flex justify-center py-6">
             <Loader2 className="animate-spin w-6 h-6 text-gray-500" />
@@ -87,7 +82,7 @@ export const ServiceList = () => {
       {isError && <p className="text-red-500">Error loading services.</p>}
 
       <div className="space-y-4">
-        {data?.data.map((service) => (
+        {data?.data.map((service: ServiceType) => (
           <motion.div
             key={service.id}
             initial={{ opacity: 0, y: 10 }}
@@ -99,13 +94,11 @@ export const ServiceList = () => {
             className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition cursor-pointer"
             onClick={() => router.push(`/services/${service.id}`)}
           >
-            {/* Left side: Service name and type */}
             <div className="flex flex-col">
               <h2 className="text-lg font-medium text-gray-900">{service.name}</h2>
               <p className="text-sm text-gray-500">{service.type}</p>
             </div>
 
-            {/* Right side: Status + Action buttons */}
             <div className="flex items-center gap-3">
               <StatusBadge status={service.status} />
               <button
@@ -134,7 +127,6 @@ export const ServiceList = () => {
         ))}
       </div>
 
-      {/* Pagination */}
       <div className="flex items-center justify-center gap-4 mt-6">
         <Button
           variant="outline"
@@ -157,7 +149,6 @@ export const ServiceList = () => {
         <p className="text-sm text-gray-400 text-center">Refreshing data...</p>
       )}
 
-      {/* Modals */}
       <ServiceModal
         open={showModal || !!editing}
         onClose={() => {
@@ -172,13 +163,14 @@ export const ServiceList = () => {
         onClose={() => setDeleteTarget(null)}
         onConfirm={async () => {
           try {
+            if (!deleteTarget) return;
             await deleteMutation.mutateAsync(deleteTarget.id);
             setDeleteTarget(null);
           } catch {
             alert('Failed to delete service.');
           }
         }}
-        loading={deleteMutation.isLoading}
+        loading={deleteMutation.isPending}
       />
     </div>
   );

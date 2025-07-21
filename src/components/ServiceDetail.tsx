@@ -1,5 +1,6 @@
+import { ServiceType } from "@/lib/type";
 
-export const ServiceDetail = ({ service }: { service: any }) => {
+export const ServiceDetail = ({ service }: { service: ServiceType }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Online":

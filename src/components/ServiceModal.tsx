@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useCreateService, useUpdateService } from '@/hooks/useServiceMutations';
 import { X } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { ServiceType } from '@/lib/type';
 
 export const ServiceModal = ({
   open,
@@ -12,7 +13,7 @@ export const ServiceModal = ({
 }: {
   open: boolean;
   onClose: () => void;
-  existing?: { id: string; name: string; type: string };
+  existing?: ServiceType | null;
 }) => {
   const [name, setName] = useState('');
   const [type, setType] = useState('API');
