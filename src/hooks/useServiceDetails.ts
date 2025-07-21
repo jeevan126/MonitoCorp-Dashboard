@@ -1,4 +1,3 @@
-// hooks/useServiceDetails.ts
 import { useQuery } from '@tanstack/react-query';
 
 export const useServiceDetails = (id: string) => {
@@ -9,7 +8,7 @@ export const useServiceDetails = (id: string) => {
       if (!res.ok) throw new Error('Failed to fetch service');
       return res.json();
     },
-    staleTime: 1000 * 60 * 5, // 5 min
+    staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: true,
   });
 };

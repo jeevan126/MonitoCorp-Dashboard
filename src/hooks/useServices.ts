@@ -17,9 +17,9 @@ export const useServices = (params: {
 
       const res = await fetch(`/api/services?${query.toString()}`);
       if (!res.ok) throw new Error('Failed to fetch services');
-      return res.json(); // { data, total, page, limit }
+      return res.json(); 
     },
-    keepPreviousData: true,
+    placeholderData: (previousData) => previousData, 
     staleTime: 60_000,
   });
 };

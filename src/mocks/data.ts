@@ -15,12 +15,12 @@ export const mockServices = [
 import { faker } from '@faker-js/faker';
 
 const statusOptions = ['Online', 'Offline', 'Degraded'];
-const serviceIds = ['1', '2', '3', '4', '5']; // Simulate 5 services
+const serviceIds = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11']; 
 
-export const mockEvents = Array.from({ length: 300 }).map((_, i) => {
+export const mockEvents = Array.from({ length: 500 }).map((_, i) => {
   const randomServiceId = faker.helpers.arrayElement(serviceIds);
   const randomStatus = faker.helpers.arrayElement(statusOptions);
-  const timestamp = faker.date.recent({ days: 60 }); // recent 60 days
+  const timestamp = faker.date.recent({ days: 60 }); 
 
   return {
     id: `event-${i + 1}`,

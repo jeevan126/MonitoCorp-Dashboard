@@ -13,7 +13,7 @@ export const useCreateService = () => {
       return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['services']);
+      queryClient.invalidateQueries({ queryKey: ['services'] });
     },
   });
 };
@@ -31,7 +31,7 @@ export const useUpdateService = () => {
       return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['services']);
+      queryClient.invalidateQueries({queryKey: ['services']} );
     },
   });
 };
@@ -50,7 +50,7 @@ export const useDeleteService = () => {
       return true;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['services']);
+      queryClient.invalidateQueries({ queryKey: ['services'] });
     },
   });
 };

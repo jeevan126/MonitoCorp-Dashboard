@@ -4,28 +4,44 @@ import { useParams, useRouter } from 'next/navigation';
 import { useServiceDetails } from '@/hooks/useServiceDetails';
 import { ServiceDetail } from '@/components/ServiceDetail';
 import { EventList } from '@/components/EventList';
+import { Loader2, ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function ServiceDetailPage() {
   const { id } = useParams() as { id: string };
   const router = useRouter();
   const { data, isLoading, isError } = useServiceDetails(id);
 
-  if (isLoading) return <p className="p-4">Loading...</p>;
-  if (isError || !data) return <p className="p-4 text-red-500">Failed to load service.</p>;
-
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
-      <button
-        onClick={() => router.push('/')}
-        className="text-sm text-blue-600 underline mb-2 hover:text-blue-800"
-      >
-        ← Back to Services
-      </button>
+    <main className="max-w-3xl mx-auto py-10 px-4">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold text-gray-800">MonitoCorp Services</h1>
+        <Button
+          variant="ghost"
+          className="flex items-center text-sm text-blue-600 hover:text-blue-800 px-2 py-1"
+          onClick={() => router.push('/')}
+        >
+          <ArrowLeft className="w-4 h-4 mr-1" />
+          Back
+        </Button>
+      </div>
 
-      <ServiceDetail service={data} />
+      {isLoading ? (
+        <div className="flex justify-center items-center h-40">
+          <Loader2 className="animate-spin w-6 h-6 text-gray-500" />
+        </div>
+      ) : isError || !data ? (
+        <p className="text-red-500 text-sm text-center">⚠️ Failed to load service.</p>
+      ) : (
+        <div className="space-y-6">
+          <ServiceDetail service={data} />
 
-      <h2 className="text-lg font-semibold mb-2">Status History</h2>
-      <EventList serviceId={id} />
-    </div>
+          <div>
+            <h2 className="text-lg font-semibold mb-2 text-gray-800">Status History</h2>
+            <EventList serviceId={id} />
+          </div>
+        </div>
+      )}
+    </main>
   );
 }

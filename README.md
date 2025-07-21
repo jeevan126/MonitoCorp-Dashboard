@@ -1,36 +1,97 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🛠️ MonitoCorp Service Dashboard
 
-## Getting Started
+A modern service monitoring dashboard built with **Next.js**, **React Query**, and **Tailwind CSS**, designed to provide live status updates, rich filtering, and historical event tracking for all registered services.
 
-First, run the development server:
+---
+
+## 📦 Features
+
+- **Service List View** with filtering, pagination, and search
+- **Live Status Updates** on the current page without refreshing
+- **Create/Edit/Delete Services** using custom modals with confirmation prompts
+- **Service Details View** with full historical event tracking and infinite scroll
+- **Toast notifications** for user feedback
+- **Clean, responsive, and accessible UI** using utility-first styling
+
+---
+
+## 🧱 Tech Stack & Architectural Decisions
+
+| Layer        | Library / Tool              | Why it was chosen                                                                 |
+|--------------|-----------------------------|------------------------------------------------------------------------------------|
+| **Framework**| [Next.js](https://nextjs.org) | For file-based routing, API flexibility, SSR/SSG, and scalability                  |
+| **Styling**  | [Tailwind CSS](https://tailwindcss.com) | Utility-first, responsive design system with high performance                    |
+| **Data Fetching** | [TanStack React Query v5](https://tanstack.com/query/v5) | Declarative, cache-aware, and optimized API data handling                         |
+| **Mocking**  | [MSW (Mock Service Worker)](https://mswjs.io/) | Intercepts fetch/XHR for seamless development/testing without real backend        |
+| **State**    | `useState`, `useEffect`, and `React Query` cache | Lightweight, no unnecessary global state manager like Redux                      |
+| **Notifications** | [react-hot-taost](https://react-hot-toast.com/) or similar toast system | Non-blocking, elegant notifications                                               |
+| **UI Elements** |Built using `shadcn/ui` (Headless UI + Tailwind) | Accessible UI primitives and fine-grained control                                 |
+| **Icons** | `lucide-react` |  provides consistent and clean SVG iconography.|
+
+---
+
+## 🗂️ Folder Structure
+
+├── components/ # UI components (ServiceList, ServiceDetail, EventList, Modals)
+├── hooks/ # React Query hooks (CRUD and infinite queries)
+├── mocks/ # MSW mock handlers & data
+├── pages/ # Next.js pages (index.tsx, [id].tsx)
+├── public/ # Static assets
+├── styles/ # Global styles (if needed)
+└── utils/ # Helper functions
+
+## 🧠 Architectural Decisions
+
+### 💡 Modular Components
+- All logic is separated into small, composable components. ServiceList handles list view, ServiceDetail handles individual detail view, and EventList manages infinite scrolling events.
+
+### 💡 State Management
+- React Query v5 is used instead of a global state manager like Redux. This allows us to cache, invalidate, and refetch data without writing boilerplate reducers or actions.
+
+### 💡 Polling
+- Polling is enabled only for the currently visible page using a custom `useStatusPolling` hook, minimizing network load while keeping data fresh.
+
+### 💡 Smooth Navigation
+- Navigation to the detail view is animated using `router.push()` and hover transitions, with fast route transitions and loading indicators.
+
+### 💡 Infinite Scroll for Events
+- Service events are paginated with an infinite scroll observer, improving UX and avoiding long DOM lists.
+
+### 💡 UX & Feedback
+- All key actions (Create, Update, Delete) display toast messages for success/failure.
+- Loading spinners and skeletons enhance user feedback.
+
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js v18+
+- npm or yarn
+
+### 1. Clone the Repository
+
+
+```bash
+git clone https://github.com/your-username/monitocorp-dashboard.git
+cd monitocorp-dashboard
+
+```
+### 2. Install Dependencies
+
+
+```bash
+npm install
+# or
+yarn install
+```
+
+### 3. Start the Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
