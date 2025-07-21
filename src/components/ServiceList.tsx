@@ -7,6 +7,15 @@ import { useStatusPolling } from '@/hooks/useStatusPolling';
 import { ServiceModal } from './ServiceModal';
 import { useDeleteService } from '@/hooks/useServiceMutations';
 import { DeleteModal } from './DeleteModal';
+import {
+  Card,
+  CardContent,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
+import { Trash2, Pencil, Plus, Loader2 } from 'lucide-react';
 
 export const ServiceList = () => {
   const [filters, setFilters] = useState<{ status?: string; name_like?: string }>({});
@@ -26,122 +35,129 @@ export const ServiceList = () => {
 
   return (
     <div className="space-y-6">
-      {/* Filter Controls */}
+      {/* Filters */}
       <div className="flex gap-4 items-center">
-        <input
+        <Input
           placeholder="Search by name..."
-          className="border p-2 rounded w-1/3"
+          className="w-1/3"
           onChange={(e) => {
             setPage(1);
             setFilters((f) => ({ ...f, name_like: e.target.value }));
           }}
         />
-        <select
-          className="border p-2 rounded"
-          onChange={(e) => {
+
+        <Select
+          onValueChange={(value) => {
             setPage(1);
-            setFilters((f) => ({ ...f, status: e.target.value || undefined }));
+            setFilters((f) => ({
+              ...f,
+              status: value === 'all' ? undefined : value,
+            }));
           }}
         >
-          <option value="">All statuses</option>
-          <option value="Online">Online</option>
-          <option value="Offline">Offline</option>
-          <option value="Degraded">Degraded</option>
-        </select>
-        <button
-          className="ml-auto px-4 py-2 bg-green-600 text-white rounded"
+          <SelectTrigger className="w-[200px]">
+            <SelectValue placeholder="Filter by status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All statuses</SelectItem>
+            <SelectItem value="Online">Online</SelectItem>
+            <SelectItem value="Offline">Offline</SelectItem>
+            <SelectItem value="Degraded">Degraded</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Button
+          className="ml-auto"
           onClick={() => {
             setEditing(null);
             setShowModal(true);
           }}
         >
-          + Add Service
-        </button>
+          <Plus className="w-4 h-4 mr-2" />
+          Add Service
+        </Button>
       </div>
 
-      {/* List */}
-      {isLoading && <p>Loading services...</p>}
+      {/* Service List */}
+      {isLoading && 
+        <div className="flex justify-center py-6">
+            <Loader2 className="animate-spin w-6 h-6 text-gray-500" />
+        </div>
+      }
       {isError && <p className="text-red-500">Error loading services.</p>}
 
       <div className="space-y-4">
         {data?.data.map((service) => (
+          <motion.div
+            key={service.id}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
           <div
             key={service.id}
-            className="border rounded-lg p-4 shadow flex justify-between items-center hover:bg-gray-50 transition"
+            className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition cursor-pointer"
+            onClick={() => router.push(`/services/${service.id}`)}
           >
-            <div
-              onClick={() => router.push(`/services/${service.id}`)}
-              className="cursor-pointer flex-1"
-            >
-              <h2 className="font-semibold text-lg">{service.name}</h2>
+            {/* Left side: Service name and type */}
+            <div className="flex flex-col">
+              <h2 className="text-lg font-medium text-gray-900">{service.name}</h2>
               <p className="text-sm text-gray-500">{service.type}</p>
             </div>
 
-            <div className="flex items-center gap-3 ml-4">
+            {/* Right side: Status + Action buttons */}
+            <div className="flex items-center gap-3">
               <StatusBadge status={service.status} />
-
               <button
-                className="text-blue-600 text-sm underline"
-                onClick={() => {
+                className="text-blue-600 hover:text-blue-800"
+                onClick={(e) => {
+                  e.stopPropagation();
                   setEditing(service);
                   setShowModal(true);
                 }}
               >
-                Edit
+                <Pencil className="w-5 h-5" />
               </button>
-
               <button
-                className="text-red-600 text-sm underline"
-                onClick={() => setDeleteTarget(service)}
-              >
-                Delete
-              </button>
-
-              <DeleteModal
-                open={!!deleteTarget}
-                onClose={() => setDeleteTarget(null)}
-                onConfirm={async () => {
-                  try {
-                    await deleteMutation.mutateAsync(deleteTarget.id);
-                    setDeleteTarget(null);
-                  } catch (err) {
-                    alert('Failed to delete service.');
-                  }
+                className="text-red-600 hover:text-red-800"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setDeleteTarget(service);
                 }}
-                loading={deleteMutation.isLoading}
-              />
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
             </div>
           </div>
+
+          </motion.div>
         ))}
       </div>
 
       {/* Pagination */}
       <div className="flex items-center justify-center gap-4 mt-6">
-        <button
-          className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+        <Button
+          variant="outline"
           onClick={() => setPage((p) => Math.max(p - 1, 1))}
           disabled={page === 1}
         >
           Prev
-        </button>
-        <span>
-          Page {page} of {totalPages}
-        </span>
-        <button
-          className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+        </Button>
+        <span className="text-sm">Page {page} of {totalPages}</span>
+        <Button
+          variant="outline"
           onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
           disabled={page >= totalPages}
         >
           Next
-        </button>
+        </Button>
       </div>
 
-      {/* Background refresh indicator */}
       {isFetching && !isLoading && (
         <p className="text-sm text-gray-400 text-center">Refreshing data...</p>
       )}
 
-      {/* Add/Edit Modal */}
+      {/* Modals */}
       <ServiceModal
         open={showModal || !!editing}
         onClose={() => {
@@ -150,19 +166,33 @@ export const ServiceList = () => {
         }}
         existing={editing}
       />
+
+      <DeleteModal
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={async () => {
+          try {
+            await deleteMutation.mutateAsync(deleteTarget.id);
+            setDeleteTarget(null);
+          } catch {
+            alert('Failed to delete service.');
+          }
+        }}
+        loading={deleteMutation.isLoading}
+      />
     </div>
   );
 };
 
 const StatusBadge = ({ status }: { status: string }) => {
   const colorMap: Record<string, string> = {
-    Online: 'bg-green-100 text-green-800',
-    Offline: 'bg-red-100 text-red-800',
-    Degraded: 'bg-yellow-100 text-yellow-800',
+    Online: 'bg-green-100 text-green-700',
+    Offline: 'bg-red-100 text-red-700',
+    Degraded: 'bg-yellow-100 text-yellow-700',
   };
   return (
     <span
-      className={`px-3 py-1 text-sm rounded-full ${colorMap[status] || 'bg-gray-100 text-gray-800'}`}
+      className={`text-xs font-medium px-3 py-1 rounded-full ${colorMap[status] || 'bg-gray-100 text-gray-700'}`}
     >
       {status}
     </span>
