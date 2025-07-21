@@ -24,8 +24,9 @@ A modern service monitoring dashboard built with **Next.js**, **React Query**, a
 | **Data Fetching** | [TanStack React Query v5](https://tanstack.com/query/v5) | Declarative, cache-aware, and optimized API data handling                         |
 | **Mocking**  | [MSW (Mock Service Worker)](https://mswjs.io/) | Intercepts fetch/XHR for seamless development/testing without real backend        |
 | **State**    | `useState`, `useEffect`, and `React Query` cache | Lightweight, no unnecessary global state manager like Redux                      |
-| **Notifications** | [sonner](https://ui.shadcn.dev/docs/components/sonner) or similar toast system | Non-blocking, elegant notifications                                               |
-| **UI Elements** | Headless UI / Custom Modals | Accessible UI primitives and fine-grained control                                 |
+| **Notifications** | [react-hot-taost](https://react-hot-toast.com/) or similar toast system | Non-blocking, elegant notifications                                               |
+| **UI Elements** |Built using `shadcn/ui` (Headless UI + Tailwind) | Accessible UI primitives and fine-grained control                                 |
+| **Icons** | `lucide-react` |  provides consistent and clean SVG iconography.|
 
 ---
 
@@ -90,9 +91,7 @@ yarn install
 ### 3. Start the Development Server
 
 ```bash
-# Automatically starts with dev mode
 npm run dev
 
 Open http://localhost:3000 in your browser.
 
-```bash
